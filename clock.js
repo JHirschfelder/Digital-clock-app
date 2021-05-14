@@ -1,54 +1,90 @@
-var clockTime=document.getElementById('time');
-var clockDate=document.getElementById('date');
+const clockTime=document.getElementById('time');
+const clockDate=document.getElementById('date');
 
-const theDays=["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-const theMonths=["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
-
-function dateSuffix(i){
-  if (i==1){
-    return "st";
-  } else if (i==2){
-    return "nd";
-  } else if (i==3){
-    return "rd";
-  } else{
-    return "th";
-  }
-}
-
-function amPm(i){
-  if(i<12){
-    return "AM";
-  } else{
-    return "PM";
-  }
-}
-
-function tic (){
+function displayClock (){
   
-  var theTime=new Date();
+  const theTime=new Date();
 
-  var sec=String(theTime.getSeconds()).padStart(2, '0');
+  const seconds=addLeadingZero(theTime.getSeconds());
 
-  var min=String(theTime.getMinutes()).padStart(2, '0');
+  const minutes=addLeadingZero(theTime.getMinutes());
 
-  var hr=String((theTime.getHours()% 12) || 12).padStart(2, '0');
+  let hour=addLeadingZero(theTime.getHours());
 
-  var day=theDays[theTime.getDay()];
+  const isAm = hour <12 || hour ===0;
 
-  var dd=String(theTime.getDate())+dateSuffix(theTime.getDate());
+  let amPm = isAm ? 'AM' : 'PM';
 
-  var mm=theMonths[theTime.getMonth()];
-
-  var yyyy=theTime.getFullYear();
-
-    clockTime.textContent=hr+':'+min+':'+sec+' '+amPm(theTime.getHours())
-
-    clockDate.textContent=day+', '+mm+' '+dd+' '+yyyy
-
+  clockTime.textContent= `${renderAmPm(hour)}:${minutes}:${seconds} ${amPm}`
 }
 
-tic()
+function renderAmPm(hour) {
+  hour = hour >= 13 ? hour - 12 : hour;
+  hour = hour === 0 ? hour = 12 : hour;
+  return hour;
+}
 
-setInterval(tic, 1000);
+function addLeadingZero(number) {
+  return number < 10 ? '0' + number : number;
+}
+
+function displayDate () {
+  const theDate = new Date();
+
+  const day=theDays[theDate.getDay()];
+
+  const date=dateSuffix(theDate.getDate());
+
+  const month=theMonths[theDate.getMonth()];
+
+  const year=theDate.getFullYear();
+
+  clockDate.textContent = `${day}, ${month} ${date} ${year}`;
+}
+
+function dateSuffix(date){
+  if (date < 10 || date > 20) {
+    switch (date % 10) {
+      case 1:
+        return date + 'st';
+      case 2:
+        return date + 'nd';
+      case 3:
+        return date + 'rd';
+    }
+  }
+  return date + 'th';
+}
+
+const theDays = [
+  "Sunday", 
+  "Monday", 
+  "Tuesday", 
+  "Wednesday", 
+  "Thursday", 
+  "Friday", 
+  "Saturday"
+];
+
+const theMonths = [
+  "January", 
+  "February", 
+  "March", 
+  "April", 
+  "May", 
+  "June",
+  "July", 
+  "August", 
+  "September", 
+  "October", 
+  "November", 
+  "December"
+];
+
+displayClock();
+displayDate();
+
+setInterval(() => {
+  displayClock();
+  displayDate();
+}, 1000);
